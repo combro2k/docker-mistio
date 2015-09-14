@@ -19,15 +19,20 @@ pre_install() {
 	apt-get install -yq ${packages[@]} 2>&1
 }
 
+post_install(){
+    apt-get autoremove
+    apt-get clean
+	rm -fr /var/lib/apt
+}
+
 install_mistio() {
-    mkdir -p /app/mistio
-    git clone https://github.com/mistio/mist.io.git /app/mistio
-    pushd /app/mistio
+    git clone https://github.com/mistio/mist.io.git /opt/mistio 2>&1
+    pushd /opt/mistio
     virtualenv -p python2.7 .
-    ./bin/pip install ansible
-    ./bin/pip install setuptools --upgrade
-    ./bin/python bootstrap.py
-    ./bin/buildout -v
+    /opt/mistio/bin/pip install ansible 2>&1
+    /opt/mistio/bin/pip install setuptools --upgrade 2>&1
+    /opt/mistio/bin/python bootstrap.py 2>&1
+    /opt/mistio/bin/buildout -v 2>&1
     popd
 }
 
@@ -45,7 +50,7 @@ build() {
 	for task in ${tasks[@]}
 	do
 		echo "Running build task ${task}..."
-		${task} | tee -a "${INSTALL_LOG}" > /dev/null 2>&1 || exit 1
+		${task} | tee -a "${INSTALL_LOG}" || exit 1
 	done
 }
 
