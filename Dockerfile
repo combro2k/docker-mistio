@@ -1,6 +1,9 @@
 FROM combro2k/debian-debootstrap:8
-
 MAINTAINER Martijn van Maurik <docker@vmaurik.nl>
+
+# Environment variables
+ENV HOME=/root \
+    INSTALL_LOG=/var/log/build.log
 
 # Add resources
 ADD resources/bin/ /usr/local/bin/

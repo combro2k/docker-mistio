@@ -14,16 +14,6 @@ export packages=(
     'wget'
 )
 
-create_users() {
-    if [ ! -d "${APP_USER}" ]
-	then
-		echo "Creating user ${APP_USER}..."
-
-		useradd -d "${APP_HOME}" -m -s "/bin/bash" "${APP_USER}"
-	fi
-
-	return 0
-}
 pre_install() {
 	apt-get update -q 2>&1
 	apt-get install -yq ${packages[@]} 2>&1
@@ -49,6 +39,7 @@ build() {
 
 	tasks=(
 		'pre_install'
+		'install_mistio'
 	)
 
 	for task in ${tasks[@]}
@@ -68,12 +59,7 @@ then
 
 	exit 1
 else
-    if [ -z "${rvm_prefix}" ]
-    then
-        load_rvm
-    fi
-
-	for task in ${@}
+    for task in ${@}
 	do
 		echo "Running ${task}..."
 		${task} || exit 1
